@@ -1,0 +1,57 @@
+name: Actualizar catálogo y publicar PWA
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: biblioteca-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Recuperar último catálogo publicado
+        uses: actions/cache/restore@v4
+        with:
+          path: data/catalogo.json
+          key: catalogo-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: catalogo-
+      - name: Actualizar desde Google Sheets
+        id: catalog
+        continue-on-error: true
+        run: python scripts/update_catalog.py
+      - name: Advertir si se conserva el catálogo anterior
+        if: steps.catalog.outcome == 'failure'
+        run: echo '::warning::No se pudo actualizar Google Sheets. Se publicará el último catálogo disponible.'
+      - name: Guardar catálogo para futuras ejecuciones
+        if: steps.catalog.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: data/catalogo.json
+          key: catalogo-${{ github.run_id }}-${{ github.run_attempt }}
+      - uses: actions/configure-pages@v5
+      - name: Preparar archivos públicos
+        run: |
+          mkdir public
+          cp index.html styles.css app.js sw.js manifest.webmanifest icon.svg icon-192.png icon-512.png public/
+          cp -r data public/
+          touch public/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4
