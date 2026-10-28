@@ -12,7 +12,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-URL = 'https://docs.google.com/spreadsheets/d/12NpLp4Y0_p5pMs4FM6_02vZChdZcGL5f3wqFZzFbXzk/export?format=xlsx'
+URL = 'https://docs.google.com/spreadsheets/d/178--ZUhnOJwtE44AWgUEdhPyCNNK8IBkf515sb8pIpY/export?format=xlsx&gid=718518414'
 FIELDS = {1: 'ubicacion', 3: 'titulo', 4: 'autor', 10: 'editorial', 11: 'lugarPublicacion', 12: 'fecha', 13: 'paginas', 21: 'enlace'}
 
 def read_xlsx(raw):
@@ -20,7 +20,10 @@ def read_xlsx(raw):
     relns = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
     with zipfile.ZipFile(io.BytesIO(raw)) as archive:
         workbook = ET.fromstring(archive.read('xl/workbook.xml'))
-        sheet = next(s for s in workbook.findall('s:sheets/s:sheet', ns) if s.get('name') == 'Biblioteca')
+        matches = [s for s in workbook.findall('s:sheets/s:sheet', ns) if s.get('name', '').strip().casefold() == 'biblioteca']
+        if len(matches) != 1:
+            raise ValueError('No se encontró una única pestaña BIBLIOTECA. No se importarán otras hojas.')
+        sheet = matches[0]
         relations = {r.get('Id'):r.get('Target') for r in ET.fromstring(archive.read('xl/_rels/workbook.xml.rels'))}
         path = relations[sheet.get('{'+relns+'}id')]
         path = path.lstrip('/') if path.startswith('/') else 'xl/'+path
