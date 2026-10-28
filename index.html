@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173f38"><meta name="description" content="Explora los libros de la biblioteca personal de Carlos Buela. Catálogo bibliográfico y acceso a los archivos digitales disponibles.">
+  <title>Biblioteca Católica</title>
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./"><span class="brandmark" aria-hidden="true">✦</span> Biblioteca Católica</a><button id="install" hidden>Instalar aplicación <span aria-hidden="true">↗</span></button><span class="toplabel">CATÁLOGO BIBLIOGRÁFICO</span></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">BIBLIOTECA PERSONAL DE CARLOS BUELA</p><h1>Una biblioteca.<br>Un horizonte de lectura.</h1><p class="lead">Explora el catálogo y encuentra tu próxima lectura.<br>Consulta las fichas y accede a los libros disponibles en formato digital.</p></div><div class="library-art" aria-hidden="true"><div class="arch"><span>BC</span><i></i><small>FE · CULTURA · PENSAMIENTO</small></div><div class="bookline"><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div></div></section>
+    <section class="catalog" aria-label="Catálogo de libros">
+      <div class="catalog-head"><h2>Explorar el catálogo</h2><span id="total">Cargando biblioteca…</span></div>
+      <form id="filters" role="search"><div class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Buscar por título o autor…" aria-label="Buscar por título o autor" autocomplete="off"><kbd>/</kbd></div><div class="filter-row"><label>Disponibilidad<select id="availability"><option value="all">Todos los libros</option><option value="yes">Con archivo digital</option><option value="no">Sin archivo digital</option></select></label><label>Editorial<select id="publisher"><option value="">Todas las editoriales</option></select></label><label>Ordenar por<select id="sort"><option value="title">Título: A–Z</option><option value="author">Autor: A–Z</option><option value="date">Año: más reciente</option></select></label><button id="clear" type="button">Restablecer filtros</button></div></form>
+      <div class="results-bar"><p id="results" role="status" aria-live="polite">Preparando catálogo…</p><span id="connection">Catálogo público</span></div>
+      <div id="books" class="books"></div><div id="empty" class="empty" hidden><h3>No encontramos libros</h3><p>Prueba con otro título o autor, o restablece los filtros.</p></div><div id="error" class="empty" hidden><h3>No pudimos cargar el catálogo</h3><p>Comprueba tu conexión y vuelve a intentarlo.</p><button id="retry">Volver a intentar</button></div>
+      <nav id="pagination" class="pagination" aria-label="Páginas del catálogo"><button id="previous">← Anterior</button><span id="page"></span><button id="next">Siguiente →</button></nav>
+    </section>
+  </main>
+  <footer><div><strong>Biblioteca Católica</strong><p>Biblioteca personal de Carlos Buela</p></div><div><p id="updated"></p><p>Los archivos digitales se abren en una página externa.</p></div></footer>
+  <dialog id="detail"><button id="close" class="close" aria-label="Cerrar ficha">✕</button><p class="eyebrow">FICHA BIBLIOGRÁFICA</p><h2 id="detail-title"></h2><p id="detail-author"></p><dl id="detail-fields"></dl><div id="detail-action"></div></dialog>
+  <div id="update-banner" hidden>Hay una nueva versión disponible. <button id="reload">Actualizar</button></div>
+</body></html>
